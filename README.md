@@ -12,4 +12,6 @@ Options:
 
 -N Non working snapshot
 
+-W Working snapshot
+
 The legacy version for filenaming was simply [MM]-[DD]-[YYYY], which assumes all code works. We might fix this later.
