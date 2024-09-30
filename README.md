@@ -4,3 +4,8 @@ This repository contains the OnBot java snapshots. FTC's libs don't play nice wi
 
 It is maintained by The Software Team (not quite sure what rights reserved).
 
+LEGEND:
+[MM]-[DD]-[YYYY]-[OPTIONS]
+Options:
+-N Non working snapshot
+-----------------------
