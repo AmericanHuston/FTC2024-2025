@@ -36,6 +36,10 @@ public class CoachTesting extends LinearOpMode {
 
 
         double SLIDER_POWER = 0.80;
+        double arm_max = 0.3;
+        double arm_min = 0.0;
+        double claw_min = 0.3;
+        double claw_max = 0.75;
         int CYCLE_MS = 50;
         Servo servo0 = hardwareMap.get(Servo.class, "servo0");
         Servo arm = hardwareMap.get(Servo.class, "arm");
@@ -89,15 +93,46 @@ public class CoachTesting extends LinearOpMode {
             }
 
             if (gamepad2.a) {
-                DesiredArmPosition = 0.3;
+                DesiredArmPosition = arm_max;
             } else if (gamepad2.b){
-                DesiredArmPosition = 0.0;
+                DesiredArmPosition = arm_min;
             }
 
             if (gamepad2.x) {
-                DesiredClawPosition = 0.0;
+                DesiredClawPosition = claw_min;
             } else if (gamepad2.y) {
-                DesiredClawPosition = 1.0;
+                DesiredClawPosition = claw_max;
+            }
+
+            if (gamepad2.right_bumper) {
+                // Tweak Max/min values when the right bumper is held down and another button is pushed.
+                if (gamepad2.a) {
+                    arm_max += INCREMENT;
+                }
+                if (gamepad2.b) {
+                    arm_min += INCREMENT;
+                }
+                if (gamepad2.x) {
+                    claw_min += INCREMENT;
+                }
+                if (gamepad2.y) {
+                    claw_max += INCREMENT;
+                }
+            }
+
+            if (gamepad2.left_bumper) {
+                if (gamepad2.a) {
+                    arm_max -= INCREMENT;
+                }
+                if (gamepad2.b) {
+                    arm_min -= INCREMENT;
+                }
+                if (gamepad2.x) {
+                    claw_min -= INCREMENT;
+                }
+                if (gamepad2.y) {
+                    claw_max -= INCREMENT;
+                }
             }
 
 
@@ -158,14 +193,19 @@ public class CoachTesting extends LinearOpMode {
             servo0.setPosition(DesiredServo0Position);
 
             telemetry.addData("ROBOT", "Status:" + "Servo:" + servo0.getPosition());
-            telemetry.addData("ROBOT", "Status:" + "Servo:" + arm.getPosition());
-            telemetry.addData("ROBOT", "Status:" + "Servo:" + claw.getPosition());
+            telemetry.addData("ROBOT", "Status:" + "Arm:" + arm.getPosition());
+            telemetry.addData("ROBOT", "Status:" + "Claw:" + claw.getPosition());
 
             telemetry.addData("DesiredSliderPower", DesiredSliderPower);
             telemetry.addData("SliderLeftPos", sliderLeft.getCurrentPosition());
             telemetry.addData("SliderRightPos", sliderRight.getCurrentPosition());
             telemetry.addData("DesiredArmPosition", DesiredArmPosition);
             telemetry.addData("DesiredClawPosition", DesiredClawPosition);
+            telemetry.addData("claw_min", claw_min);
+            telemetry.addData("claw_max", claw_max);
+            telemetry.addData("arm_min", arm_min);
+            telemetry.addData("arm_max", arm_max);
+
 
             telemetry.addData("ROBOT", "Status:" + "Front Right =" + Math.round(frontRightPower * 100.0)/100.0);
             telemetry.addData("ROBOT", "Status:" + "Front Left =" + Math.round(frontLeftPower * 100.0)/100.0);//Echos information using classification.
