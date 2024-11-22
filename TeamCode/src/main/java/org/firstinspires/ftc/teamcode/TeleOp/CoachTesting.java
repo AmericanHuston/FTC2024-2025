@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -40,12 +41,21 @@ public class CoachTesting extends LinearOpMode {
         double arm_min = 0.0;
         double claw_min = 0.3;
         double claw_max = 0.75;
+        int slider_max = 4000;
+        int slider_min = 100;
         int CYCLE_MS = 50;
         Servo servo0 = hardwareMap.get(Servo.class, "servo0");
         Servo arm = hardwareMap.get(Servo.class, "arm");
         Servo claw = hardwareMap.get(Servo.class, "claw");
         DcMotor sliderLeft = hardwareMap.get(DcMotor.class, "SliderLeft");
         DcMotor sliderRight = hardwareMap.get(DcMotor.class, "SliderRight");
+        // The sliders are mirrored from each other, so we need to reverse the direction of one of them.
+        sliderRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        // Hold the sliders in position
+        sliderLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        sliderRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        sliderLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        sliderRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         // Declare our motors
         // Make sure your ID's match your configuration
@@ -118,6 +128,12 @@ public class CoachTesting extends LinearOpMode {
                 if (gamepad2.y) {
                     claw_max += INCREMENT;
                 }
+                if (gamepad2.dpad_up) {
+                    slider_max += 10;
+                }
+                if (gamepad2.dpad_down) {
+                    slider_min += 10;
+                }
             }
 
             if (gamepad2.left_bumper) {
@@ -132,6 +148,12 @@ public class CoachTesting extends LinearOpMode {
                 }
                 if (gamepad2.y) {
                     claw_max -= INCREMENT;
+                }
+                if (gamepad2.dpad_up) {
+                    slider_max -= 10;
+                }
+                if (gamepad2.dpad_down) {
+                    slider_min -= 10;
                 }
             }
 
@@ -178,8 +200,30 @@ public class CoachTesting extends LinearOpMode {
             frontRightMotor.setPower(frontRightPower);
             backRightMotor.setPower(backRightPower);
 
-            sliderLeft.setPower(DesiredSliderPower);
-            sliderRight.setPower(-DesiredSliderPower);
+            // Sliders via motor power
+            // sliderLeft.setPower(DesiredSliderPower);
+            //sliderRight.setPower(DesiredSliderPower);
+
+            // Sliders via position
+            if (gamepad2.dpad_up) {
+                int target_position = slider_max;
+                sliderLeft.setTargetPosition(target_position);
+                sliderRight.setTargetPosition(target_position);
+                sliderLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                sliderRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                sliderLeft.setPower(0.5);
+                sliderRight.setPower(0.5);
+            }
+
+            if (gamepad2.dpad_down) {
+                int target_position = slider_min;
+                sliderLeft.setTargetPosition(target_position);
+                sliderRight.setTargetPosition(target_position);
+                sliderLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                sliderRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                sliderLeft.setPower(0.5);
+                sliderRight.setPower(0.5);
+            }
 
             if (gamepad1.a) {
                 DesiredArmPosition = servoSlide();
@@ -205,6 +249,8 @@ public class CoachTesting extends LinearOpMode {
             telemetry.addData("claw_max", claw_max);
             telemetry.addData("arm_min", arm_min);
             telemetry.addData("arm_max", arm_max);
+            telemetry.addData("slider_min", slider_min);
+            telemetry.addData("slider_max", slider_max);
 
 
             telemetry.addData("ROBOT", "Status:" + "Front Right =" + Math.round(frontRightPower * 100.0)/100.0);
