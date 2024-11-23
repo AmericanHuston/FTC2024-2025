@@ -37,12 +37,12 @@ public class CoachTesting extends LinearOpMode {
 
 
         double SLIDER_POWER = 0.80;
-        double arm_max = 0.3;
-        double arm_min = 0.0;
-        double claw_min = 0.3;
-        double claw_max = 0.75;
+        double arm_max = 0.52;
+        double arm_min = 0.2;
+        double claw_min = 0.1;
+        double claw_max = 0.53;
         int slider_max = 4000;
-        int slider_min = 100;
+        int slider_min = 30;
         int CYCLE_MS = 50;
         Servo servo0 = hardwareMap.get(Servo.class, "servo0");
         Servo arm = hardwareMap.get(Servo.class, "arm");
